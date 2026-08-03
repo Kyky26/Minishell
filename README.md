@@ -2,11 +2,11 @@
 
 ## Description
 
-Summary: Recreating a simple shell / or own bash.
+### Summary: Recreating a simple shell / or own bash.
 
 Note: Limit yourself to the subject description. Anything not asked is not required. If you have any doubt about a requirement, take bash as a reference,
 
-Requirements:
+### Requirements:
 1. Display a prompt when waiting for a new command.
 2. Have a working history.
 3. Search and launch the right executable (based on the PATH variable or using a relative or an absolute path).
@@ -29,9 +29,118 @@ Requirements:
     - exit with no options
 Note: The readline() function may cause memory leaks, but you are not required to fix them. However, this does not mean your own code can have memory leaks.
 
+### Planning
 
+Minishell is like Read-Eval-Print Loop (REPL).
+
+Bash (Bourne Again SHell) works as a command-line interpreter that acts as a textual bridge between you and your computer's operating system kernel. 
+
+How bash works:
+REPL (Read-Eval-Print-Loop), meaning it constantly waits for input, translates that input into actions the computer understands, displays the result, and loops back to wait for the next command.
+
+Command Processing Cycle:
+
+
+1. Read: takes the raw text string you typed into the terminal.
+- Copy Environment: On program startup, clone envp into a custom linked list or array -> able to modify (export / unset) without memory issues.
+- Setting up prompt signals: Setup sigaction for SIGINT (Ctrl+C) to clear line and reprint prompt, and SIGQUIT (Ctrl+\)
+- Display Prompt: Call line = readline("minishell$ ")
+- Check EOF (Ctrl+D): If line == NULL, print exit\n, free environment, and exit program
+- Add History: If line is not empty, call add_history(line).
+
+
+2. Lexer / Tokenize: Breaking up the string into pieces (tokens) separated by spaces to identify the core command and its argument.
+
+Goal: Convert char *line into an array or linked list of t_token structs
+
+3. Expansion: Processes the special symbols. Replaces variables (like $USER to your username), expands shortcuts (like ~ to your home directory), and evaluates wildcards.
+
+4. Execution: Looks for the program. If built-in function, run it instantly. 
+
+5. Print: Program sends its output back to Bash for display and shows a new prompt for next input. 
+
+*Need to remember to clear mem use to prevent mem leak
+
+
+Example of how everything comes together:
+
+Step 1: readline() - raw input
+gives you one long string.
+
+char *line = "cat < input.txt | grep \"$USER\"";
+Note: At this stage, the program don't know what cat, <, or | mean yet. These are just characters and words.
+
+Step 2: Lexer / Tokenizer - splitting into Words
+
+Lexer will slice the string into individual Tokens (words and operators). It will tag each piece so the shell knows what role it plays.
+
+Output of Lexer (Token List):
+
+1. [WORD] -> "cat"
+2. [REDIR_IN] -> "<"
+3. [WORD] -> "input.txt"
+4. [PIPE] -> "|"
+5. [WORD] -> "grep"
+6. [WORD] -> "\"$USER\""
+
+Note: Now, the program knows about the meaning behind each special characters like |, <, >, <<, >>) without searching through a single raw string over and over.
+
+Step 3: Expander - Variables and quotes
+Note: Go token by token through the list created by Lexer and clean up the text
+
+1. Look for the character $, replace $USER with ktyu
+2. Strip outer quotes: "ktyu" to ktyu.
+
+Output after expander:
+
+1. [WORD] -> "cat"
+2. [REDIR_IN] -> "<"
+3. [WORD] -> "input.txt"
+4. [PIPE] -> "|"
+5. [WORD] -> "grep"
+6. [WORD] -> "ktyu"
+
+Step 4: Parser (Building the execution structure)
+
+Parser will take those refined tokens and group them into t_cmd linked list separated by PIPE tokens.
+
+// Node 1 (Before Pipe)
+t_cmd Node 1:
+    args   = ["cat", NULL]
+    redirs = [type: REDIR_IN, file: "input.txt"]
+    next   = Pointer to Node 2
+
+// Node 2 (After Pipe)
+t_cmd Node 2:
+    args   = ["grep", "ktyu", NULL]
+    redirs = NULL
+    next   = NULL
+
+Step 5: Executor 
+
+Process the t_cmd list:
+
+1. Sees Node 1 has a next node? -> Calls pipe().
+2. Sees Node 1 has redirs? -> Opens input.txt and calls dup2() to redirect stdin.
+3. Runs execve("/bin/cat", ["cat"], env).
+4. Moves to Node 2 and executes grep ktyu.
 
 
 ## Instructions
 
+current compilation:
+
+cc -Wall -Werror -Wall main.c -o main
+
+
 ## Resources
+
+### Problem(s) faced:
+
+Problem 1: issue with using readline() - meaning encountering the error "No such file or directory" even after including the 
+#include <readline/readline.h>
+
+Solution:
+Fixed your OS by running:
+1) sudo apt-get update
+2) sudo apt-get install libreadline-dev
