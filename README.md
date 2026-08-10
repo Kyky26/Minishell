@@ -74,6 +74,17 @@ Step 2: Lexer / Tokenizer - splitting into Words
 
 Lexer will slice the string into individual Tokens (words and operators). It will tag each piece so the shell knows what role it plays.
 
+Note:
+Enumerations (enum) creates a custom user-defined type whose values are restricted to a named set of integer constants.
+
+We will need to use both enum and struct together.
+
+struct: will hold the data for a token. it will hold different information such as the string value and a pointer to the next node.
+
+enum: will assign a type or category to that token so that the code can quick identify what it is.
+
+
+
 Output of Lexer (Token List):
 
 1. [WORD] -> "cat"
@@ -130,7 +141,7 @@ Process the t_cmd list:
 
 current compilation:
 
-cc -Wall -Werror -Wall main.c -o main
+cc main.c -o main -lreadline
 
 
 ## Resources
