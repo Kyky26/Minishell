@@ -6,13 +6,13 @@
 /*   By: ktyu <ktyu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/10 23:44:52 by ktyu              #+#    #+#             */
-/*   Updated: 2026/08/11 00:28:03 by ktyu             ###   ########.fr       */
+/*   Updated: 2026/08/13 01:50:36 by ktyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
 
-t_token *new_token(char *value, t_token type)
+t_token *new_token(char *value, t_token_type type)
 {
 	t_token *token;
 

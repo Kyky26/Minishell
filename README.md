@@ -96,10 +96,23 @@ Output of Lexer (Token List):
 
 Note: Now, the program knows about the meaning behind each special characters like |, <, >, <<, >>) without searching through a single raw string over and over.
 
+Example:
+
+ktyu@LAPTOP-8K47KAAD:~/minishell_shared$ cc main.c lexer.c lexer_helper.c -o main -lreadline
+ktyu@LAPTOP-8K47KAAD:~/minishell_shared$ ./main
+minishell$ 1
+Token: [1           ] Type: 0
+minishell$ ls -l > cat.txt
+Token: [ls          ] Type: 0
+Token: [-l          ] Type: 0
+Token: [>           ] Type: 3
+Token: [cat.txt     ] Type: 0
+
 Step 3: Expander - Variables and quotes
 Note: Go token by token through the list created by Lexer and clean up the text
 
 1. Look for the character $, replace $USER with ktyu
+
 2. Strip outer quotes: "ktyu" to ktyu.
 
 Output after expander:
