@@ -6,7 +6,7 @@
 /*   By: ktyu <ktyu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/16 20:47:32 by ktyu              #+#    #+#             */
-/*   Updated: 2026/09/10 01:57:44 by ktyu             ###   ########.fr       */
+/*   Updated: 2026/09/20 17:04:34 by ktyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -131,12 +131,17 @@ void	expander(t_token *tokens, char **envp, int last_status)
 	curr = tokens;
 	while (curr)
 	{
-		if (curr->type == TOKEN_WORD)
+		if (curr->type == TOKEN_HEREDOC && curr->next && curr->next->type == TOKEN_WORD)
+		{
+			clean = strip_quotes(curr->next->value);
+			free(curr->next->value);
+			curr->next->value = clean;
+			curr = curr->next;
+		}
+		else if (curr->type == TOKEN_WORD)
 		{
 			expanded = expand_var(curr->value, envp, last_status);
-			
 			clean = strip_quotes(expanded);
-			
 			free(curr->value);
 			free(expanded);
 			curr->value = clean;

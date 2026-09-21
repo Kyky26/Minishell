@@ -6,7 +6,7 @@
 /*   By: ktyu <ktyu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/05 00:27:38 by ktyu              #+#    #+#             */
-/*   Updated: 2026/09/09 20:34:13 by ktyu             ###   ########.fr       */
+/*   Updated: 2026/09/20 23:04:51 by ktyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,6 +20,9 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <signal.h>
+
+extern int	g_sig;
 
 typedef enum token_type
 {
@@ -73,9 +76,15 @@ t_token	*lexer(char *line);
 
 char	*find_env_value(char *key, char **envp, int last_status);
 char	*strip_quotes(char *str);
+int		check_syntax_errors(t_token *token);
 void	expander(t_token *tokens, char **envp, int last_status);
+
+char	**copy_env(char **envp);
+void	free_all_env(char **envp);
 
 void	free_cmd(t_cmd *cmd);
 t_cmd	*parser(t_token *tokens);
+
+void	setup_sig(void);
 
 #endif

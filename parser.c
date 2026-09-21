@@ -6,7 +6,7 @@
 /*   By: ktyu <ktyu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/31 01:33:38 by ktyu              #+#    #+#             */
-/*   Updated: 2026/09/09 18:46:47 by ktyu             ###   ########.fr       */
+/*   Updated: 2026/09/20 17:38:52 by ktyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -88,6 +88,8 @@ t_cmd	*parser(t_token *tokens)
 	t_cmd	*curr_cmd;
 
 	if (!tokens)
+		return (NULL);
+	if (check_syntax_errors(tokens))
 		return (NULL);
 	head = new_cmd();
 	curr_cmd = head;

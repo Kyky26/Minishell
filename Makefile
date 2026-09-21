@@ -6,7 +6,7 @@
 #    By: ktyu <ktyu@student.42.fr>                  +#+  +:+       +#+         #
 #                                                 +#+#+#+#+#+   +#+            #
 #    Created: 2026/09/09 17:10:57 by ktyu              #+#    #+#              #
-#    Updated: 2026/09/09 18:41:43 by ktyu             ###   ########.fr        #
+#    Updated: 2026/09/20 23:44:14 by ktyu             ###   ########.fr        #
 #                                                                              #
 # **************************************************************************** #
 
@@ -22,7 +22,9 @@ SRCS =	main.c \
 		lexer.c \
 		parser_helper.c \
 		parser.c \
-		exp_helper.c
+		exp_helper.c \
+		env_helper.c \
+		signals.c
 
 OBJS := $(SRCS:.c=.o)
 

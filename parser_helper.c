@@ -6,11 +6,48 @@
 /*   By: ktyu <ktyu@student.42.fr>                  +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2026/08/31 01:39:50 by ktyu              #+#    #+#             */
-/*   Updated: 2026/09/10 02:03:21 by ktyu             ###   ########.fr       */
+/*   Updated: 2026/09/20 18:29:56 by ktyu             ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "minishell.h"
+
+int		check_syntax_errors(t_token *tokens)
+{
+	if (!tokens)
+		return (0);
+	if (tokens->type == TOKEN_PIPE)
+	{
+		printf("minishell: syntax error near unexpected token '|'\n");
+		return (1);
+	}
+	while (tokens)
+	{
+		if (tokens->type >= TOKEN_REDIR_IN && tokens->type <= TOKEN_APPEND)
+		{
+			if (!tokens->next || tokens->next->type != TOKEN_WORD)
+			{
+				printf("minishell: syntax error near unexpected token 'newline'\n");
+				return (1);
+			}
+		}
+		if (tokens->type == TOKEN_PIPE)
+		{
+			if (!tokens->next)
+			{
+				printf("minishell: syntax error near unexpected token '|'\n");
+				return (1);
+			}
+			if (tokens->next->type == TOKEN_PIPE)
+			{
+				printf("minishell: syntax error near unexpected token '|'\n");
+				return (1);
+			}			
+		}
+		tokens = tokens->next;
+	}
+	return (0);
+}
 
 void	free_cmd(t_cmd *cmd)
 {
@@ -39,3 +76,5 @@ void	free_cmd(t_cmd *cmd)
 		cmd = tmp_cmd;
 	}
 }
+
+
